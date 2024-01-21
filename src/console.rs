@@ -1,20 +1,26 @@
-use std::io::stdin;
+use std::io::{stdin, self, Write};
 
 pub enum LogLevel {
-    INFO, WARN, ERR
+    INFO, WARN, ERR, INPUT
 }
 
-pub fn log(level: LogLevel, message: &str) {
+pub fn log(level: LogLevel, message: String) {
     match level {
         LogLevel::INFO => println!("INFO | {}", message),
         LogLevel::WARN => println!("WARN | {}", message),
-        LogLevel::ERR => println!("ERROR | {}", message)
+        LogLevel::ERR => println!("ERROR | {}", message),
+        LogLevel::INPUT => println!("INPUT | {}", message)
     }
 }
 
 pub fn read_input() -> String {
     let stdin = stdin();
     let mut input: String = String::new();
+    
+    print!("> ");
+    io::stdout().flush()
+        .expect("Error; unable to flush console.");
+
     stdin.read_line(&mut input)
         .expect("Invalid input provided!");
 
