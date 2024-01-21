@@ -6,8 +6,6 @@ use crate::files::{DataFiles, FileData};
 
 fn get_id(title: String, file: Vec<FileData>) -> Option<i32> {
     for entry in file {
-        println!("{}", &entry.title.to_ascii_lowercase());
-        println!("{}", &title.to_ascii_lowercase());
         if entry.title.trim()
             .to_ascii_lowercase() == title.trim().to_ascii_lowercase() {
             return Some(entry.id)
@@ -20,7 +18,6 @@ fn get_id(title: String, file: Vec<FileData>) -> Option<i32> {
 fn ensure_two_digits(id: String) -> String {
     let mut new_id = id.clone();
     while new_id.len() < 2 {
-        println!("Inserted char");
         new_id.insert_str(0, "0");
     }
 
@@ -42,7 +39,10 @@ pub fn generate_command(files: &mut DataFiles) {
             break 'a;
         }
 
-        println!("Unable to find a department by that name!");
+        log(
+            LogLevel::INFO,
+            format!("Unable to find a department by that name!")
+        );
     }
 
     let role: i32;
@@ -58,7 +58,10 @@ pub fn generate_command(files: &mut DataFiles) {
             break 'a;
         }
 
-        println!("Unable to find a role by that name!");
+        log(
+            LogLevel::INFO,
+            format!("Unable to find a role by that name!")
+        );
     }
 
     log(LogLevel::INPUT, format!("What is the employee's first name?"));
@@ -79,10 +82,16 @@ pub fn generate_command(files: &mut DataFiles) {
         let continue_str = read_input();
         match continue_str.to_ascii_lowercase().as_str() {
             "y" | "yes" => {
-                println!("Continuing!")
+                log(
+                    LogLevel::INFO,
+                    format!("Continuing!")
+                )
             },
             _ => {
-                println!("Returning...");
+                log(
+                    LogLevel::INFO,
+                    format!("Returning...")
+                );
                 return
             }
         }
