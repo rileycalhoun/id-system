@@ -6,8 +6,8 @@ pub mod list_command;
 pub mod save_command;
 pub mod verify_command;
 
-use crate::console::{log,LogLevel,read_input};
-use crate::employee::{EmployeeFile,Employee};
+use crate::console::{log,LogLevel};
+use crate::employee::EmployeeFile;
 use crate::files::DataFiles;
 
 use self::delete_command::delete_command;
