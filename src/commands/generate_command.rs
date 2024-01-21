@@ -28,13 +28,13 @@ fn ensure_two_digits(id: String) -> String {
 }
 
 pub fn generate_command(files: &mut DataFiles) {
-    for data in files.departments.clone() {
-        log(LogLevel::INPUT,
-            format!("{}. {}", data.id, data.title));
-    }
-
     let department: i32;
     'a: loop {
+        for data in files.departments.clone() {
+            log(LogLevel::INPUT,
+                format!("{}. {}", data.id, data.title));
+        }
+
         log(LogLevel::INPUT, format!("Please pick a department: "));
         let dep = get_id(read_input(), files.departments.clone());
         if dep.is_some() {
@@ -45,12 +45,12 @@ pub fn generate_command(files: &mut DataFiles) {
         println!("Unable to find a department by that name!");
     }
 
-    for data in files.roles.clone() {
-        log(LogLevel::INPUT, format!("{}. {}", data.id, data.title));
-    }
-
     let role: i32;
     'a: loop {
+        for data in files.roles.clone() {
+            log(LogLevel::INPUT, format!("{}. {}", data.id, data.title));
+        }
+
         log(LogLevel::INPUT, format!("Please pick a role:"));
         let r = get_id(read_input(), files.roles.clone());
         if r.is_some() {
