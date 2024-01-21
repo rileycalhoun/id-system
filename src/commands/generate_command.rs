@@ -15,9 +15,9 @@ fn get_id(title: String, file: Vec<FileData>) -> Option<i32> {
     return None
 }
 
-fn ensure_two_digits(id: String) -> String {
+fn ensure_length(id: String, len: usize) -> String {
     let mut new_id = id.clone();
-    while new_id.len() < 2 {
+    while new_id.len() < len {
         new_id.insert_str(0, "0");
     }
 
@@ -112,9 +112,9 @@ pub fn generate_command(files: &mut DataFiles) {
     let employee = Employee {
         first_name,
         last_name,
-        department: ensure_two_digits(department.to_string()),
-        role: ensure_two_digits(role.to_string()),
-        id
+        department: ensure_length(department.to_string(), 2),
+        role: ensure_length(role.to_string(), 2),
+        id: ensure_length(id, 2)
     };
 
     log(LogLevel::INFO, format!("Generated new ID for {} {}: {}{}{}", 
