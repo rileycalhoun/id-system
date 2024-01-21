@@ -4,7 +4,7 @@ use crate::console::{log,LogLevel,read_input};
 use crate::employee::{EmployeeFile,Employee};
 use crate::files::DataFiles;
 
-pub fn generate_command(_: Vec<String>, files: &DataFiles, employees: &mut EmployeeFile) {
+pub fn generate_command(files: &DataFiles, employees: &mut EmployeeFile) {
     for data in files.departments.data.clone() {
         log(LogLevel::INPUT,
             format!("{}. {}", data.id, data.title));

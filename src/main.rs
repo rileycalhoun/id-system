@@ -26,7 +26,7 @@ fn main() {
 
     loop {
         let raw_command = read_input();
-        let (command, args) = cook_raw_command(raw_command);
-        handle_command(command, args, &files, &mut employees);
+        let command = cook_raw_command(raw_command);
+        handle_command(command, &files, &mut employees);
     }
 }

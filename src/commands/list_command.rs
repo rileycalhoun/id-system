@@ -3,7 +3,7 @@ use crate::console::{log,LogLevel};
 use crate::employee::EmployeeFile;
 use crate::files::DataFiles;
 
-pub fn list_command(_: Vec<String>, _: &DataFiles, employees: &mut EmployeeFile) {
+pub fn list_command(_: &DataFiles, employees: &mut EmployeeFile) {
     let employee_list = employees.clone().json();
     let mut index = 0;
     for employee in employee_list {
