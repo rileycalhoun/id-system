@@ -50,7 +50,7 @@ pub fn handle_command(command: String, args: Vec<String>, files: &DataFiles, emp
         }
 
         None => {
-            log(LogLevel::INFO, "Unknown command! Try 'help' for a list of commands.".to_string());
+            log(LogLevel::INFO, format!("Unknown command! Try 'help' for a list of commands"));
         }
     }
 
@@ -135,10 +135,10 @@ pub fn get_commands() -> [Command; 7] {
             "verify",
             None, 
             |_, _, employees| {
-                log(LogLevel::INPUT, "What is the ID of the employee you'd like to verify?".to_string());
+                log(LogLevel::INPUT, format!("What is the ID of the employee you'd like to verify?"));
                 let id = read_input();
                 if !employees.contains(&id) {
-                    log(LogLevel::INFO, "That employee doesn't exist in our records!".to_string());
+                    log(LogLevel::INFO, format!("That employee doesn't exist in our records!"));
                     return;
                 }
 
@@ -168,7 +168,7 @@ pub fn get_commands() -> [Command; 7] {
                     .expect("Could not save employees.json!");
                 log(
                     LogLevel::INFO,
-                    "Successfully saved employees.json!".to_string()
+                    format!("Successfully saved employees.json!")
                 );
         }),
         Command::new(
@@ -182,7 +182,7 @@ pub fn get_commands() -> [Command; 7] {
                     if optional.is_none() {
                         log(
                             LogLevel::ERR,
-                            "Error running help; looped too many times.".to_string()
+                            format!("Error running help; looped too many times.")
                         );
                         return;
                     }
@@ -200,7 +200,7 @@ pub fn get_commands() -> [Command; 7] {
         Command::new("exit",
         Some(&["close", "stop"]),
         |_, _, _| {
-            log(LogLevel::INFO, "Thank you for using the ID system!".to_string());
+            log(LogLevel::INFO, format!("Thank you for using the ID system!"));
             std::process::exit(0);
         }),
         Command::new("list", None,  |_, _, employees| {
