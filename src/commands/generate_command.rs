@@ -34,7 +34,7 @@ pub fn generate_command(files: &mut DataFiles) {
             log(LogLevel::INPUT,
                 format!("{}. {}", data.id, data.title));
         }
-
+        
         log(LogLevel::INPUT, format!("Please pick a department: "));
         let dep = get_id(read_input(), files.departments.clone());
         if dep.is_some() {
@@ -66,6 +66,27 @@ pub fn generate_command(files: &mut DataFiles) {
 
     log(LogLevel::INPUT, format!("What is the employee's last name?"));
     let last_name = read_input();
+
+    let has_employee = &files.employees.get_employee_by_full_name(&first_name, &last_name)
+        .is_some();
+    if has_employee == &true {
+        log(
+            LogLevel::INPUT,
+            format!("Records indicate that an employee by the name of {} {} is already assigned an employee ID, create anyways? (Y/N)",
+                        &first_name, &last_name)
+        );
+
+        let continue_str = read_input();
+        match continue_str.to_ascii_lowercase().as_str() {
+            "y" | "yes" => {
+                println!("Continuing!")
+            },
+            _ => {
+                println!("Returning...");
+                return
+            }
+        }
+    }
 
     // TODO: Check whether an employee with the first and last name exist in the database already
 
