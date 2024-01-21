@@ -1,5 +1,6 @@
 extern crate serde_json;
 
+use crate::employee::EmployeeFile;
 use serde::{Serialize,Deserialize};
 use serde_json::{Value,Deserializer};
 use std::fs;
@@ -15,7 +16,8 @@ pub struct FileData {
 #[derive(Clone)]
 pub struct DataFiles {
     pub departments: Vec<FileData>,
-    pub roles: Vec<FileData>
+    pub roles: Vec<FileData>,
+    pub employees: EmployeeFile
 }
 
 pub fn has_needed_files() -> bool {
@@ -52,16 +54,4 @@ pub fn parse_file(path: &str) -> Vec<FileData> {
         .expect(format!("Could not parse data from {}", path).as_str());
     
     return data;
-}
-
-pub fn parse_data_files() -> DataFiles {
-    let departments = parse_file("data/departments.json");
-    let roles = parse_file("data/roles.json");
-
-    let files = DataFiles {
-        departments,
-        roles
-    };
-
-    return files;
 }

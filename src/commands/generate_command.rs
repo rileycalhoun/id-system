@@ -1,10 +1,10 @@
 use rand::Rng;
 
 use crate::console::{log,LogLevel,read_input};
-use crate::employee::{EmployeeFile,Employee};
+use crate::employee::Employee;
 use crate::files::DataFiles;
 
-pub fn generate_command(files: &DataFiles, employees: &mut EmployeeFile) {
+pub fn generate_command(files: &mut DataFiles) {
     for data in files.departments.clone() {
         log(LogLevel::INPUT,
             format!("{}. {}", data.id, data.title));
@@ -30,7 +30,7 @@ pub fn generate_command(files: &DataFiles, employees: &mut EmployeeFile) {
 
     'a: loop {
         id = rng.gen_range(0..1000).to_string();
-        if !employees.contains(&id) {
+        if !&files.employees.contains(&id) {
             break 'a;
         }
     }
@@ -54,5 +54,5 @@ pub fn generate_command(files: &DataFiles, employees: &mut EmployeeFile) {
         LogLevel::INFO, 
         format!("Be sure to save the file before closing the provram with the 'save' command.")
     );
-    employees.insert(employee);
+    files.employees.insert(employee);
 }

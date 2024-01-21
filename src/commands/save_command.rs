@@ -1,10 +1,9 @@
 
 use crate::console::{log,LogLevel};
-use crate::employee::EmployeeFile;
 use crate::files::DataFiles;
 
-pub fn save_command(_: &DataFiles, employees: &mut EmployeeFile) {
-    employees.write()
+pub fn save_command(files: &mut DataFiles) {
+    files.employees.write()
         .expect("Could not save employees.json!");
     log(
         LogLevel::INFO,

@@ -1,10 +1,9 @@
 
 use crate::console::{log,LogLevel};
-use crate::employee::EmployeeFile;
 use crate::files::DataFiles;
 
-pub fn list_command(_: &DataFiles, employees: &mut EmployeeFile) {
-    let employee_list = employees.clone().json();
+pub fn list_command(files: &mut DataFiles) {
+    let employee_list = files.employees.clone().get_employees();
     let mut index = 0;
     for employee in employee_list {
         index += 1;
