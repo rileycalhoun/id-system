@@ -3,7 +3,7 @@ use crate::console::{log,LogLevel,read_input};
 use crate::employee::EmployeeFile;
 use crate::files::DataFiles;
 
-pub fn delete_command(_: Vec<String>, _: &DataFiles, employees: &mut EmployeeFile) {
+pub fn delete_command(_: &DataFiles, employees: &mut EmployeeFile) {
     log(LogLevel::INPUT, format!("What is the ID of the user you'd like to remove?"));
     let id = read_input();
     let optional = employees.remove(&id);

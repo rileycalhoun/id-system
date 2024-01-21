@@ -3,7 +3,7 @@ use crate::console::{log,LogLevel,read_input};
 use crate::employee::EmployeeFile;
 use crate::files::DataFiles;
 
-pub fn verify_command(_: Vec<String>, _: &DataFiles, employees: &mut EmployeeFile) {
+pub fn verify_command(_: &DataFiles, employees: &mut EmployeeFile) {
     log(LogLevel::INPUT, format!("What is the ID of the employee you'd like to verify?"));
     let id = read_input();
     if !employees.contains(&id) {

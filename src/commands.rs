@@ -21,12 +21,12 @@ use self::verify_command::verify_command;
 pub struct Command {
     name: String,
     aliases: Option<&'static [&'static str]>,
-    exec: fn(args: Vec<String>, files: &DataFiles, employees: &mut EmployeeFile)
+    exec: fn(files: &DataFiles, employees: &mut EmployeeFile)
 }
 
 impl Command {
 
-    fn new(name: &str, aliases: Option<&'static [&str]>, exec: fn(args: Vec<String>, files: &DataFiles, employees: &mut EmployeeFile)) -> Self {
+    fn new(name: &str, aliases: Option<&'static [&str]>, exec: fn(files: &DataFiles, employees: &mut EmployeeFile)) -> Self {
         Command {
             name: String::from(name.to_ascii_lowercase()),
             aliases,
@@ -36,7 +36,7 @@ impl Command {
 
 }
 
-pub fn cook_raw_command(raw_command: String) -> (String, Vec<String>) {
+pub fn cook_raw_command(raw_command: String) -> String {
     let command_array: Vec<&str> = raw_command
         .split(" ")
         .collect::<Vec<&str>>();
@@ -45,23 +45,16 @@ pub fn cook_raw_command(raw_command: String) -> (String, Vec<String>) {
         .expect("Did not provide a command!")
         .trim()
         .to_ascii_lowercase();
-        
-    let mut args = command_array
-        .clone()
-        .into_iter()
-        .map(|arg| arg.trim().to_ascii_lowercase())
-        .collect::<Vec<String>>();
 
-    args.remove(0);
-    return (command, args)
+    return command
 }
 
-pub fn handle_command(command: String, args: Vec<String>, files: &DataFiles, employees: &mut EmployeeFile) {
+pub fn handle_command(command: String, files: &DataFiles, employees: &mut EmployeeFile) {
 
     let optional = get_command(command.to_ascii_lowercase());
     match optional {
         Some(command) => {
-            (command.exec)(args, files, employees);
+            (command.exec)(files, employees);
         }
 
         None => {

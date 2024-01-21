@@ -3,7 +3,7 @@ use crate::console::{log,LogLevel};
 use crate::employee::EmployeeFile;
 use crate::files::DataFiles;
 
-pub fn help_command(_: Vec<String>, _: &DataFiles, _: &mut EmployeeFile) {
+pub fn help_command(_: &DataFiles, _: &mut EmployeeFile) {
     let mut index: usize = 0;
     let commands = &super::get_commands();
     'a: loop {
