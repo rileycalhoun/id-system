@@ -12,30 +12,20 @@ pub struct FileData {
     pub title: String
 }
 
-
-#[derive(Deserialize,Serialize,Clone)]
-pub struct DataFile {
-    pub data: Vec<FileData>
-}
-
 #[derive(Clone)]
 pub struct DataFiles {
-    pub departments: DataFile,
-    pub roles: DataFile
+    pub departments: Vec<FileData>,
+    pub roles: Vec<FileData>
 }
 
 pub fn has_needed_files() -> bool {
-    let has_data_folder = Path::new("data").exists();
-    let has_departments_file = Path::new("data/departments.json").exists();
-    let has_roles_file = Path::new("data/roles.json").exists();
+    let has_data_folder = Path::new("data").exists();    
     let has_employee_file = Path::new("data/employees.json").exists();
-
     if has_data_folder && !has_employee_file {
         match fs::File::create("data/employees.json") {
 
             Ok(file) => {
                 let writer = BufWriter::new(file);
-
                 let default_value: Value = serde_json::from_str("{}").unwrap();
                 serde_json::to_writer_pretty(writer, &default_value)
                     .expect("Couldn't write to employees.json!");
@@ -48,15 +38,17 @@ pub fn has_needed_files() -> bool {
         }
     }
 
+    let has_departments_file = Path::new("data/departments.json").exists();
+    let has_roles_file = Path::new("data/roles.json").exists();
     return has_data_folder && has_departments_file && has_roles_file;
 }
 
-pub fn parse_file(path: &str) -> DataFile {
+pub fn parse_file(path: &str) -> Vec<FileData> {
     let contents = fs::read_to_string(path)
         .expect(format!("Unable to call read_to_string {}!", path).as_str());
 
     let mut deserializer = Deserializer::from_str(&contents);
-    let data = DataFile::deserialize(&mut deserializer)
+    let data = Vec::deserialize(&mut deserializer)
         .expect(format!("Could not parse data from {}", path).as_str());
     
     return data;

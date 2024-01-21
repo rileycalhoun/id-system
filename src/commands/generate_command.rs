@@ -5,7 +5,7 @@ use crate::employee::{EmployeeFile,Employee};
 use crate::files::DataFiles;
 
 pub fn generate_command(files: &DataFiles, employees: &mut EmployeeFile) {
-    for data in files.departments.data.clone() {
+    for data in files.departments.clone() {
         log(LogLevel::INPUT,
             format!("{}. {}", data.id, data.title));
     }
@@ -13,7 +13,7 @@ pub fn generate_command(files: &DataFiles, employees: &mut EmployeeFile) {
     log(LogLevel::INPUT, format!("Please pick a department: "));
     let department = read_input();
 
-    for data in files.roles.data.clone() {
+    for data in files.roles.clone() {
         log(LogLevel::INPUT, format!("{}. {}", data.id, data.title));
     }
     log(LogLevel::INPUT, format!("Please pick a role: "));
