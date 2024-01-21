@@ -22,7 +22,7 @@ fn main() {
     let files = parse_data_files();
     let mut employees = EmployeeFile::new();
 
-    log(LogLevel::INFO, format!("Welcome to the Employee ID System"));
+    log(LogLevel::INFO, format!("Welcome to the Employee ID System!"));
 
     loop {
         let raw_command = read_input();

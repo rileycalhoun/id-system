@@ -1,4 +1,4 @@
-use std::io::stdin;
+use std::io::{stdin, self, Write};
 
 pub enum LogLevel {
     INFO, WARN, ERR, INPUT
@@ -16,6 +16,11 @@ pub fn log(level: LogLevel, message: String) {
 pub fn read_input() -> String {
     let stdin = stdin();
     let mut input: String = String::new();
+    
+    print!("> ");
+    io::stdout().flush()
+        .expect("Error; unable to flush console.");
+
     stdin.read_line(&mut input)
         .expect("Invalid input provided!");
 
