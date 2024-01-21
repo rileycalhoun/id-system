@@ -24,9 +24,30 @@ pub fn read_input() -> String {
     stdin.read_line(&mut input)
         .expect("Invalid input provided!");
 
-    if input.ends_with("\n") {
-        input.pop();
-    }
+    filter_input(&mut input);
 
     return input;
+}
+
+fn filter_input(input: &mut String) {
+    let mut was_mutated = false;
+
+    if input.ends_with("\n") {
+        input.pop();
+        was_mutated = true;
+    }
+
+    if input.ends_with("\r") {
+        input.pop();
+        was_mutated = true;
+    }
+
+    if input.ends_with("\\") {
+        input.pop();
+        was_mutated = true;
+    }
+
+    if was_mutated {
+        filter_input(input);
+    }
 }

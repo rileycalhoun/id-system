@@ -61,15 +61,14 @@ impl EmployeeFile {
     }
 
     pub fn get_employee(&self, id: &String) -> Option<(Employee, usize)> {
-        let mut index: usize = 0;
-        let json = self.data.clone();
-        
-        if json.len() == 0 {
+        let data = self.data.clone();
+        if data.len() == 0 {
             return None
         }
 
+        let mut index: usize = 0;
         'a: loop {
-            let employee =  json.get(index)
+            let employee =  data.get(index)
                 .expect("Something went wrong; get_employee loop went too far.")
                 .clone();
             
@@ -85,6 +84,32 @@ impl EmployeeFile {
         }
 
         return None
+    }
+
+    pub fn get_employee_by_full_name(&self, first_name: &String, last_name: &String) -> Option<Employee> {
+        let data = self.data.clone();
+        if data.len() == 0 {
+            return None
+        }
+
+        let mut index: usize = 0;
+        'a: loop {
+            let employee =  data.get(index)
+                .expect("Something went wrong; get_employee loop went too far.")
+                .clone();
+
+            if &employee.first_name.to_ascii_lowercase() == &first_name.trim().to_ascii_lowercase()
+                && &employee.last_name.to_ascii_lowercase() == &last_name.trim().to_ascii_lowercase() {
+                    return Some(employee);
+                }
+
+            index += 1;
+            if index == self.data.len() {
+                break 'a;
+            }
+        }
+
+        return None;
     }
 
     pub fn contains(&self, id: &String) -> bool {
