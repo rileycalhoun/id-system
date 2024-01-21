@@ -14,13 +14,12 @@ pub struct Employee {
 #[derive(Clone)]
 pub struct EmployeeFile {
     path: PathBuf,
-    json: Vec<Employee>
+    data: Vec<Employee>
 }
 
 impl EmployeeFile {
 
-    pub fn new() -> Self {
-        let path = Path::new("data/employees.json").to_path_buf();
+    pub fn new(path: &Path) -> Self {
         File::open(&path)
             .expect("Could not open employees.json!");
 
@@ -29,37 +28,41 @@ impl EmployeeFile {
 
         if contents == "{}" {
             return EmployeeFile {
-                path,
-                json: Vec::new()
+                path: path.to_path_buf(),
+                data: Vec::new()
             }
         }
 
-        let json = serde_json::from_str(&contents)
+        let data = serde_json::from_str(&contents)
             .expect("Could not read employees.json!");
 
         EmployeeFile {
-            path,
-            json
+            path: path.to_path_buf(),
+            data
         }
     }
 
     pub fn write(&self) -> std::io::Result<()> {
         let file = File::create(&self.path)?;
         let mut writer = BufWriter::new(file);
-        serde_json::to_writer_pretty(&mut writer, &self.json)?;
+        serde_json::to_writer_pretty(&mut writer, &self.data)?;
         writer.flush()?;
         Ok(())
     }
 
     pub fn reload(&mut self) -> std::io::Result<()> {
         let contents = std::fs::read_to_string(&self.path)?;
-        self.json = serde_json::from_str(&contents)?;
+        self.data = serde_json::from_str(&contents)?;
         Ok(())
+    }
+
+    pub fn get_employees(self) -> Vec<Employee> {
+        return self.data
     }
 
     pub fn get_employee(&self, id: &String) -> Option<(Employee, usize)> {
         let mut index: usize = 0;
-        let json = self.json.clone();
+        let json = self.data.clone();
         
         if json.len() == 0 {
             return None
@@ -76,7 +79,7 @@ impl EmployeeFile {
             }
 
             index += 1;
-            if index == self.json.len() {
+            if index == self.data.len() {
                 break 'a;
             }
         }
@@ -90,8 +93,8 @@ impl EmployeeFile {
 
     pub fn insert(&mut self, employee: Employee) -> Option<usize> {
         if !self.contains(&employee.id) {
-            self.json.push(employee);
-            return Some(self.json.len() - 1)
+            self.data.push(employee);
+            return Some(self.data.len() - 1)
         } else {
             return None
         }
@@ -101,14 +104,10 @@ impl EmployeeFile {
         let optional = self.get_employee(id);
         match optional {
             Some((employee, index)) => {
-                let _ = self.json.remove(index);
+                let _ = self.data.remove(index);
                 return Some(employee)
             },
             None => return None
         }
-    }
-
-    pub fn json(self) -> Vec<Employee> {
-        return self.json
     }
 }
