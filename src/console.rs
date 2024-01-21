@@ -1,14 +1,15 @@
 use std::io::stdin;
 
 pub enum LogLevel {
-    INFO, WARN, ERR
+    INFO, WARN, ERR, INPUT
 }
 
-pub fn log(level: LogLevel, message: &str) {
+pub fn log(level: LogLevel, message: String) {
     match level {
         LogLevel::INFO => println!("INFO | {}", message),
         LogLevel::WARN => println!("WARN | {}", message),
-        LogLevel::ERR => println!("ERROR | {}", message)
+        LogLevel::ERR => println!("ERROR | {}", message),
+        LogLevel::INPUT => println!("INPUT | {}", message)
     }
 }
 

@@ -15,7 +15,7 @@ fn main() {
     if !has_needed_files() {
         log(
             LogLevel::ERR,
-            "You need to have the 'data' directory provided with the system in the same folder when running this application."
+            "You need to have the 'data' directory provided with the system in the same folder when running this application.".to_string()
         );
         return;
     }
@@ -23,7 +23,7 @@ fn main() {
     let files = parse_data_files();
     let mut employees = EmployeeFile::new();
 
-    log(LogLevel::INFO, "Welcome to the ID System");
+    log(LogLevel::INFO, "Welcome to the ID System".to_string());
 
     loop {
         let raw_command = read_input();

@@ -50,7 +50,7 @@ pub fn handle_command(command: String, args: Vec<String>, files: &DataFiles, emp
         }
 
         None => {
-            log(LogLevel::INFO, "Unknown command! Try 'help' for a list of commands.");
+            log(LogLevel::INFO, "Unknown command! Try 'help' for a list of commands.".to_string());
         }
     }
 
@@ -82,24 +82,22 @@ pub fn get_commands() -> [Command; 7] {
             None,
             |_, files, employees| {
                 for data in files.departments.data.clone() {
-                    println!("{}. {}", data.id, data.title);
+                    log(LogLevel::INPUT,
+                        format!("{}. {}", data.id, data.title));
                 }
-                println!("Please pick a department: ");
-
+                log(LogLevel::INPUT, format!("Please pick a department: "));
                 let department = read_input();
-                
-                println!();
+
                 for data in files.roles.data.clone() {
-                    println!("{}. {}", data.id, data.title);
+                    log(LogLevel::INPUT, format!("{}. {}", data.id, data.title));
                 }
-                println!("Please pick a role: ");
-                
+                log(LogLevel::INPUT, format!("Please pick a role: "));
                 let role = read_input();
                 
-                println!("What is the employee's first name?");
+                log(LogLevel::INPUT, format!("What is the employee's first name?"));
                 let first_name = read_input();
 
-                println!("What is the employee's last name?");
+                log(LogLevel::INPUT, format!("What is the employee's last name?"));
                 let last_name = read_input();
 
                 let mut rng = rand::thread_rng();
@@ -120,41 +118,46 @@ pub fn get_commands() -> [Command; 7] {
                     id
                 };
 
-                println!("Generated new ID for {} {}: {}{}{}", 
+                log(LogLevel::INFO, format!("Generated new ID for {} {}: {}{}{}", 
                     &employee.first_name, 
                     &employee.last_name, 
                     &employee.department, 
                     &employee.role, 
-                    &employee.id);
-                println!("Be sure to save the file before closing the provram with the 'save' command.");
+                    &employee.id));
 
+                log(
+                    LogLevel::INFO, 
+                    format!("Be sure to save the file before closing the provram with the 'save' command.")
+                );
                 employees.insert(employee);
         }),
         Command::new(
             "verify",
             None, 
             |_, _, employees| {
-                println!("What is the ID of the employee you'd like to verify?");
+                log(LogLevel::INPUT, "What is the ID of the employee you'd like to verify?".to_string());
                 let id = read_input();
                 if !employees.contains(&id) {
-                    log(LogLevel::INFO, "That employee doesn't exist in our records!");
+                    log(LogLevel::INFO, "That employee doesn't exist in our records!".to_string());
                     return;
                 }
 
                 let (employee, _)= employees.get_employee(&id)
                     .expect("Something went wrong; Checked for Employee ID but still found nothing.");
-                println!("Found employee {} {} from the provided ID!", employee.first_name, employee.last_name);
+                log(LogLevel::INFO, format!("Found employee {} {} from the provided ID!", employee.first_name, employee.last_name));
         }),
         Command::new(
             "delete",
             None,
             |_, _, employees| {
-                println!("What is the ID of the user you'd like to remove?");
+                log(LogLevel::INPUT, format!("What is the ID of the user you'd like to remove?"));
                 let id = read_input();
                 let optional = employees.remove(&id);
                 match optional {
-                    Some(employee) => println!("Removed {} {} from the employee list!", employee.first_name, employee.last_name),
-                    None => println!("Could not remove id: {} does not exist!", id)
+                    Some(employee) => log(LogLevel::INFO, 
+                        format!("Removed {} {} from the employee list!", employee.first_name, employee.last_name)),
+                    None => log(
+                        LogLevel::ERR, format!("Could not remove id: {} does not exist!", id))
                 }
             }),
         Command::new(
@@ -163,7 +166,10 @@ pub fn get_commands() -> [Command; 7] {
             |_, _, employees| {
                 employees.write()
                     .expect("Could not save employees.json!");
-                println!("Successfully saved employees.json!");
+                log(
+                    LogLevel::INFO,
+                    "Successfully saved employees.json!".to_string()
+                );
         }),
         Command::new(
             "help",
@@ -174,13 +180,16 @@ pub fn get_commands() -> [Command; 7] {
                 'a: loop {
                     let optional = commands.get(index);
                     if optional.is_none() {
-                        println!("Error running help; looped too many times.");
+                        log(
+                            LogLevel::ERR,
+                            "Error running help; looped too many times.".to_string()
+                        );
                         return;
                     }
 
                     let command = optional.unwrap();
 
-                    println!("{:?}. {}", index + 1, command.name);
+                    log(LogLevel::INFO, format!("{:?}. {}", index + 1, command.name));
 
                     index += 1;
                     if index ==  get_commands().len() {
@@ -191,7 +200,7 @@ pub fn get_commands() -> [Command; 7] {
         Command::new("exit",
         Some(&["close", "stop"]),
         |_, _, _| {
-            log(LogLevel::INFO, "Thank you for using the ID system!");
+            log(LogLevel::INFO, "Thank you for using the ID system!".to_string());
             std::process::exit(0);
         }),
         Command::new("list", None,  |_, _, employees| {
@@ -200,7 +209,10 @@ pub fn get_commands() -> [Command; 7] {
             for employee in employee_list {
                 index += 1;
                 let id = employee.department.clone()+ &employee.role + &employee.id; 
-                println!("{}. {} {}, ID: {}", index, employee.first_name, employee.last_name, id);
+                log(
+                    LogLevel::INFO,
+                    format!("{}. {} {}, ID: {}", index, employee.first_name, employee.last_name, id)
+                );
             }
         })
     ];
