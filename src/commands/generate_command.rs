@@ -126,7 +126,7 @@ pub fn generate_command(files: &mut DataFiles) {
 
     log(
         LogLevel::INFO, 
-        format!("Be sure to save the file before closing the provram with the 'save' command.")
+        format!("Be sure to save the file before closing the program with the 'save' command.")
     );
     files.employees.insert(employee);
 }
