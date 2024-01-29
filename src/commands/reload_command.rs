@@ -1,12 +1,13 @@
-use crate::{files::DataFiles, console::{log,LogLevel}};
+use crate::{files::DataFiles, console::LogLevel};
+use crate::log;
 
 pub fn reload_command(files: &mut DataFiles) {
 
     files.employees.reload()
         .expect("Error; Unable to reload employees.json!");
-    log(
+    log!(
         LogLevel::INFO, 
-        format!("Successfuly reloaded the employees.json file!")
+        "Successfuly reloaded the employees.json file!"
     );
 
 }

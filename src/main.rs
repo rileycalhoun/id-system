@@ -8,15 +8,15 @@ extern crate serde_json;
 use std::path::Path;
 
 use commands::{cook_raw_command,handle_command};
-use console::{read_input,log,LogLevel};
+use console::{read_input,LogLevel};
 use employee::EmployeeFile;
 use files::{has_needed_files, parse_file, DataFiles};
 
 fn main() {
     if !has_needed_files() {
-        log(
+        log!(
             LogLevel::ERR,
-            format!("You need to have the 'data' directory provided with the system in the same folder when running this application.")
+            "You need to have the 'data' directory provided with the system in the same folder when running this application."
         );
         return;
     }
@@ -31,7 +31,7 @@ fn main() {
         employees
     };
 
-    log(LogLevel::INFO, format!("Welcome to the Employee ID System!"));
+    log!(LogLevel::INFO, "Welcome to the Employee ID System!");
 
     loop {
         let raw_command = read_input();

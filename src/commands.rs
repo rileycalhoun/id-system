@@ -7,8 +7,10 @@ pub mod reload_command;
 pub mod save_command;
 pub mod verify_command;
 
-use crate::console::{log,LogLevel};
+use crate::console::LogLevel;
+
 use crate::files::DataFiles;
+use crate::log;
 
 use self::delete_command::delete_command;
 use self::exit_command::exit_command;
@@ -59,7 +61,7 @@ pub fn handle_command(command: String, files: &mut DataFiles) {
         }
 
         None => {
-            log(LogLevel::INFO, format!("Unknown command! Try 'help' for a list of commands"));
+            log!(LogLevel::INFO, "Unknown command! Try 'help' for a list of commands");
         }
     }
 

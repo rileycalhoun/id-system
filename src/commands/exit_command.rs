@@ -1,8 +1,9 @@
 
-use crate::console::{log,LogLevel};
+use crate::console::LogLevel;
 use crate::files::DataFiles;
+use crate::log;
 
 pub fn exit_command(_: &mut DataFiles) {
-    log(LogLevel::INFO, format!("Thank you for using the ID system!"));
+    log!(LogLevel::INFO, "Thank you for using the ID system!");
     std::process::exit(0);
 }

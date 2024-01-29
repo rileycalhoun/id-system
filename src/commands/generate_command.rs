@@ -1,8 +1,9 @@
 use rand::Rng;
 
-use crate::console::{log,LogLevel,read_input};
+use crate::console::{LogLevel,read_input};
 use crate::employee::Employee;
 use crate::files::{DataFiles, FileData};
+use crate::log;
 
 fn get_id(title: String, file: Vec<FileData>) -> Option<i32> {
     for entry in file {
@@ -28,69 +29,69 @@ pub fn generate_command(files: &mut DataFiles) {
     let department: i32;
     'a: loop {
         for data in files.departments.clone() {
-            log(LogLevel::INPUT,
-                format!("{}. {}", data.id, data.title));
+            log!(LogLevel::INPUT,
+                "{}. {}", data.id, data.title);
         }
         
-        log(LogLevel::INPUT, format!("Please pick a department: "));
+        log!(LogLevel::INPUT, "Please pick a department: ");
         let dep = get_id(read_input(), files.departments.clone());
         if dep.is_some() {
             department = dep.unwrap();
             break 'a;
         }
 
-        log(
+        log!(
             LogLevel::INFO,
-            format!("Unable to find a department by that name!")
+            "Unable to find a department by that name!"
         );
     }
 
     let role: i32;
     'a: loop {
         for data in files.roles.clone() {
-            log(LogLevel::INPUT, format!("{}. {}", data.id, data.title));
+            log!(LogLevel::INPUT, "{}. {}", data.id, data.title);
         }
 
-        log(LogLevel::INPUT, format!("Please pick a role:"));
+        log!(LogLevel::INPUT, "Please pick a role:");
         let r = get_id(read_input(), files.roles.clone());
         if r.is_some() {
             role = r.unwrap();
             break 'a;
         }
 
-        log(
+        log!(
             LogLevel::INFO,
-            format!("Unable to find a role by that name!")
+            "Unable to find a role by that name!"
         );
     }
 
-    log(LogLevel::INPUT, format!("What is the employee's first name?"));
+    log!(LogLevel::INPUT, "What is the employee's first name?");
     let first_name = read_input();
 
-    log(LogLevel::INPUT, format!("What is the employee's last name?"));
+    log!(LogLevel::INPUT, "What is the employee's last name?");
     let last_name = read_input();
 
     let has_employee = &files.employees.get_employee_by_full_name(&first_name, &last_name)
         .is_some();
     if has_employee == &true {
-        log(
+        log!(
             LogLevel::INPUT,
-            format!("Records indicate that an employee by the name of {} {} is already assigned an employee ID, create anyways? (Y/N)",
-                        &first_name, &last_name)
+            "Records indicate that an employee by the name of {} {} is already assigned an employee ID, create anyways? (Y/N)",
+            &first_name, &last_name
         );
 
         let continue_str = read_input();
         match continue_str.to_ascii_lowercase().as_str() {
             "y" | "yes" => {
-                log(
+                log!(
                     LogLevel::INFO,
-                    format!("Continuing!")
+                    "Continuing!"
                 )
             },
             _ => {
-                log(
+                log!(
                     LogLevel::INFO,
-                    format!("Returning...")
+                    "Returning..."
                 );
                 return
             }
@@ -117,16 +118,16 @@ pub fn generate_command(files: &mut DataFiles) {
         id: ensure_length(id, 2)
     };
 
-    log(LogLevel::INFO, format!("Generated new ID for {} {}: {}{}{}", 
+    log!(LogLevel::INFO, "Generated new ID for {} {}: {}{}{}", 
         &employee.first_name, 
         &employee.last_name, 
         &employee.department, 
         &employee.role, 
-        &employee.id));
+        &employee.id);
 
-    log(
+    log!(
         LogLevel::INFO, 
-        format!("Be sure to save the file before closing the program with the 'save' command.")
+        "Be sure to save the file before closing the program with the 'save' command."
     );
     files.employees.insert(employee);
 }
