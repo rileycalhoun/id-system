@@ -12,7 +12,7 @@ macro_rules! log {
         $($arg:tt)*
 
     ) => {
-        crate::console::_log(
+        $crate::console::_log(
             $crate::console::LogLevel::from($name),
             format!($($arg)*)
         )

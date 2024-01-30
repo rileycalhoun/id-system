@@ -1,13 +1,18 @@
-use crate::{files::DataFiles, console::LogLevel};
+use crate::{files::StructureFile, console::LogLevel};
 use crate::log;
 
-pub fn reload_command(files: &mut DataFiles) {
+pub fn reload_command(_: &mut StructureFile) {
 
-    files.employees.reload()
-        .expect("Error; Unable to reload employees.json!");
+    // files.employees.reload()
+    //     .expect("Error; Unable to reload employees.json!");
+    // log!(
+    //     LogLevel::INFO, 
+    //     "Successfuly reloaded the employees.json file!"
+    // );
+
     log!(
-        LogLevel::INFO, 
-        "Successfuly reloaded the employees.json file!"
-    );
+        LogLevel::ERR,
+        "Reload functionality hasn't been reimplemented yet."
+    )
 
 }

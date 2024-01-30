@@ -1,41 +1,27 @@
-mod commands;
-mod console;
-mod employee;
-mod files; 
-
-extern crate serde_json;
-
 use std::path::Path;
+use id_system::log;
+use id_system::commands::{cook_raw_command,CommandHandler};
+use id_system::console::{read_input,LogLevel};
+use id_system::files::StructureFile;
 
-use commands::{cook_raw_command,handle_command};
-use console::{read_input,LogLevel};
-use employee::EmployeeFile;
-use files::{has_needed_files, parse_file, DataFiles};
 
 fn main() {
-    if !has_needed_files() {
+    let has_data_file = Path::new("structure.json").exists();
+    if !has_data_file {
         log!(
             LogLevel::ERR,
-            "You need to have the 'data' directory provided with the system in the same folder when running this application."
+            "You need to have the structure.json file in the same directory as the application!"
         );
         return;
     }
 
-    let employees = EmployeeFile::new(Path::new("data/employees.json"));
-    let departments = parse_file("data/departments.json");
-    let roles = parse_file("data/roles.json");
-
-    let mut files = DataFiles {
-        departments,
-        roles,
-        employees
-    };
-
+    let structure_file = StructureFile::parse("structure.json");
     log!(LogLevel::INFO, "Welcome to the Employee ID System!");
 
+    let mut handler = CommandHandler::new(structure_file);
     loop {
         let raw_command = read_input();
         let command = cook_raw_command(raw_command);
-        handle_command(command, &mut files);
-    }
+        handler.handle_command(command);
+    };
 }

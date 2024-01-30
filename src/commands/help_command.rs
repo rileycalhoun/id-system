@@ -1,11 +1,12 @@
 
 use crate::console::LogLevel;
-use crate::files::DataFiles;
+use crate::files::StructureFile;
 use crate::log;
 
-pub fn help_command(_: &mut DataFiles) {
+pub fn help_command(_: &mut StructureFile) {
     let mut index: usize = 0;
-    let commands = &super::get_commands();
+    let commands = super::COMMANDS.clone();
+
     'a: loop {
         let optional = commands.get(index);
         if optional.is_none() {
@@ -21,7 +22,7 @@ pub fn help_command(_: &mut DataFiles) {
         log!(LogLevel::INFO, "{:?}. {}", index + 1, command.name);
 
         index += 1;
-        if index ==  super::get_commands().len() {
+        if index ==  commands.len() {
             break 'a;
         }
     }
