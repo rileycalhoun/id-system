@@ -1,11 +1,15 @@
+use std::rc::Rc;
 use rand::Rng;
 
-use crate::console::{log,LogLevel,read_input};
-use crate::employee::Employee;
-use crate::files::{DataFiles, FileData};
+use crate::commands::pad_left;
+use crate::console::{LogLevel,read_input};
+use crate::database::{contains_by_full_name, contains_by_unique_identifier};
+use crate::state::{ProgramState, StructuredData};
+use crate::log;
+use crate::models::Employee;
 
-fn get_id(title: String, file: Vec<FileData>) -> Option<i32> {
-    for entry in file {
+fn get_id_from_title(title: String, data: Rc<[StructuredData]>) -> Option<i32> {
+    for entry in data.iter() {
         if entry.title.trim()
             .to_ascii_lowercase() == title.trim().to_ascii_lowercase() {
             return Some(entry.id)
@@ -15,118 +19,98 @@ fn get_id(title: String, file: Vec<FileData>) -> Option<i32> {
     return None
 }
 
-fn ensure_length(id: String, len: usize) -> String {
-    let mut new_id = id.clone();
-    while new_id.len() < len {
-        new_id.insert_str(0, "0");
+fn get_padded_string_from_data(data: Rc<[StructuredData]>, phrase: &str) -> String {
+    let id: i32;
+    loop {
+        for data in data.iter() {
+            log!(LogLevel::INPUT, "{}. {}", data.id, data.title);
+        }
+
+        log!(LogLevel::INPUT, "Please pick a {}:", phrase);
+        let r = get_id_from_title(read_input(), data.clone());
+        if r.is_some() {
+            id = r.unwrap();
+            break;
+        }
+
+        log!(
+            LogLevel::INFO,
+            "Unable to find a {} by that name!", phrase
+        );
     }
 
-    return new_id;
+    return pad_left(id.to_string(), 2);
 }
 
-pub fn generate_command(files: &mut DataFiles) {
-    let department: i32;
-    'a: loop {
-        for data in files.departments.clone() {
-            log(LogLevel::INPUT,
-                format!("{}. {}", data.id, data.title));
-        }
-        
-        log(LogLevel::INPUT, format!("Please pick a department: "));
-        let dep = get_id(read_input(), files.departments.clone());
-        if dep.is_some() {
-            department = dep.unwrap();
-            break 'a;
-        }
+fn gen_id() -> String {
+    let mut rng = rand::thread_rng();
+    let mut id: i16;
 
-        log(
-            LogLevel::INFO,
-            format!("Unable to find a department by that name!")
-        );
+    loop {
+        id = rng.gen_range(1..1000);
+        let padded_id = pad_left(id.clone().to_string(), 3);
+        let contains = contains_by_unique_identifier(&padded_id); 
+        if !contains  {
+            break;
+        }
     }
 
-    let role: i32;
-    'a: loop {
-        for data in files.roles.clone() {
-            log(LogLevel::INPUT, format!("{}. {}", data.id, data.title));
-        }
+    return pad_left(id.to_string(), 3);
+}
 
-        log(LogLevel::INPUT, format!("Please pick a role:"));
-        let r = get_id(read_input(), files.roles.clone());
-        if r.is_some() {
-            role = r.unwrap();
-            break 'a;
-        }
+pub fn generate_command(state: &mut ProgramState) {
+    let file = &mut state.structure_file;
 
-        log(
-            LogLevel::INFO,
-            format!("Unable to find a role by that name!")
-        );
-    }
-
-    log(LogLevel::INPUT, format!("What is the employee's first name?"));
+    log!(LogLevel::INPUT, "What is the employee's first name?");
     let first_name = read_input();
 
-    log(LogLevel::INPUT, format!("What is the employee's last name?"));
+    log!(LogLevel::INPUT, "What is the employee's last name?");
     let last_name = read_input();
 
-    let has_employee = &files.employees.get_employee_by_full_name(&first_name, &last_name)
-        .is_some();
-    if has_employee == &true {
-        log(
+    let has_employee = contains_by_full_name(&first_name, &last_name);
+    if has_employee == true {
+        log!(
             LogLevel::INPUT,
-            format!("Records indicate that an employee by the name of {} {} is already assigned an employee ID, create anyways? (Y/N)",
-                        &first_name, &last_name)
+            "Records indicate that an employee by the name of {} {} is already assigned an employee ID, create anyways? (Y/N)",
+            &first_name, &last_name
         );
 
         let continue_str = read_input();
         match continue_str.to_ascii_lowercase().as_str() {
             "y" | "yes" => {
-                log(
+                log!(
                     LogLevel::INFO,
-                    format!("Continuing!")
+                    "Continuing!"
                 )
             },
             _ => {
-                log(
+                log!(
                     LogLevel::INFO,
-                    format!("Returning...")
+                    "Returning..."
                 );
                 return
             }
         }
     }
+    
+    let department = get_padded_string_from_data(file.departments.clone(), "department");
+    let role = get_padded_string_from_data(file.roles.clone(), "role");  
 
-    // TODO: Check whether an employee with the first and last name exist in the database already
-
-    let mut rng = rand::thread_rng();
-    let mut id;
-
-    'a: loop {
-        id = rng.gen_range(0..1000).to_string();
-        if !&files.employees.contains(&id) {
-            break 'a;
-        }
-    }
-
+    let id = gen_id();
     let employee = Employee {
+        identifier: id,
+        department,
+        role,
         first_name,
-        last_name,
-        department: ensure_length(department.to_string(), 2),
-        role: ensure_length(role.to_string(), 2),
-        id: ensure_length(id, 2)
+        last_name
     };
+    state.new_employees.push(employee.clone());
 
-    log(LogLevel::INFO, format!("Generated new ID for {} {}: {}{}{}", 
+    log!(LogLevel::INFO, "Generated new ID for {} {}: {}{}{}", 
         &employee.first_name, 
         &employee.last_name, 
         &employee.department, 
         &employee.role, 
-        &employee.id));
-
-    log(
-        LogLevel::INFO, 
-        format!("Be sure to save the file before closing the provram with the 'save' command.")
-    );
-    files.employees.insert(employee);
+        &employee.identifier);
+    log!(LogLevel::INFO, "Make sure to save using the `save` command!");
 }

@@ -1,16 +1,20 @@
+use crate::console::LogLevel;
+use crate::database::get_employees;
+use crate::state::ProgramState;
+use crate::log;
 
-use crate::console::{log,LogLevel};
-use crate::files::DataFiles;
+pub fn list_command(_: &mut ProgramState) {
+    let employee_list = get_employees();
 
-pub fn list_command(files: &mut DataFiles) {
-    let employee_list = files.employees.clone().get_employees();
-    let mut index = 0;
+    let mut index = 1;
     for employee in employee_list {
-        index += 1;
-        let id = employee.department.clone()+ &employee.role + &employee.id; 
-        log(
+        log!(
             LogLevel::INFO,
-            format!("{}. {} {}, ID: {}", index, employee.first_name, employee.last_name, id)
+            "{}. {} {}, ID: {}{}{}", 
+            index, employee.first_name, employee.last_name, 
+            employee.department, employee.role, employee.identifier
         );
+
+        index += 1;
     }
 }

@@ -1,11 +1,26 @@
 use std::io::{stdin, self, Write};
 
-// TODO: WARN is never used. If we need it, add it.
 pub enum LogLevel {
     INFO, ERR, INPUT
 }
 
-pub fn log(level: LogLevel, message: String) {
+#[macro_export]
+macro_rules! log {
+    (
+        // name of enum
+        $name:path,
+        $($arg:tt)*
+
+    ) => {
+        $crate::console::_log(
+            $crate::console::LogLevel::from($name),
+            format!($($arg)*)
+        )
+    }
+}
+
+#[doc(hidden)]
+pub fn _log(level: LogLevel, message: String) {
     match level {
         LogLevel::INFO => println!("INFO | {}", message),
         LogLevel::ERR => println!("ERROR | {}", message),

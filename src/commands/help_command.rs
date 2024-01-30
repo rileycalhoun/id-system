@@ -1,26 +1,28 @@
 
-use crate::console::{log,LogLevel};
-use crate::files::DataFiles;
+use crate::console::LogLevel;
+use crate::state::ProgramState;
+use crate::log;
 
-pub fn help_command(_: &mut DataFiles) {
+pub fn help_command(_: &mut ProgramState) {
     let mut index: usize = 0;
-    let commands = &super::get_commands();
+    let commands = super::COMMANDS.clone();
+
     'a: loop {
         let optional = commands.get(index);
         if optional.is_none() {
-            log(
+            log!(
                 LogLevel::ERR,
-                format!("Error running help; looped too many times.")
+                "Error running help; looped too many times."
             );
             return;
         }
 
         let command = optional.unwrap();
 
-        log(LogLevel::INFO, format!("{:?}. {}", index + 1, command.name));
+        log!(LogLevel::INFO, "{:?}. {}", index + 1, command.name);
 
         index += 1;
-        if index ==  super::get_commands().len() {
+        if index ==  commands.len() {
             break 'a;
         }
     }
