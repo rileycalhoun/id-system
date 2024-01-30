@@ -15,12 +15,17 @@ fn save_insertions(new_employees: &mut Vec<Employee>) -> (i16, i16) {
 
             errors += 1;
         } else {
-            indexes_inserted.push(index);
+            indexes_inserted.push(index - 1);
         }
     }
 
-    for index in &indexes_inserted {
-        new_employees.remove(*index);
+    let reversed_indexes: Vec<usize> = indexes_inserted.iter()
+        .copied()
+        .rev()
+        .collect();
+
+    for index in reversed_indexes {
+        new_employees.remove(index);
     }
 
     let insertions = indexes_inserted.len() as i16;
@@ -44,8 +49,12 @@ fn save_deletions(deleted_employees: &mut Vec<String>) -> (i16, i16) {
         }
     }
 
-    for index in &indexes_deleted {
-        deleted_employees.remove(*index);
+    let reversed_deletions: Vec<usize> = indexes_deleted.iter()
+        .copied()
+        .rev()
+        .collect();
+    for index in reversed_deletions {
+        deleted_employees.remove(index);
     }
 
     let deletions = indexes_deleted.len() as i16;
