@@ -8,7 +8,7 @@ pub fn verify_command(_: &mut ProgramState) {
     let full_identifier = read_input();
     let contains = contains_by_full_identifier(&full_identifier);
 
-    if contains {
+    if !contains {
         log!(LogLevel::INFO, "That employee doesn't exist in our records!");
         return;
     }

@@ -70,12 +70,21 @@ pub fn contains_by_unique_identifier(uid: &String) -> bool {
         .filter(identifier.eq(uid))
         .limit(1)
         .get_result::<Employee>(connection);
-    return result.is_ok();
+    if result.is_err() {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 pub fn contains_by_full_identifier(full_identifier: &String) -> bool {
     let mut uid = full_identifier.clone();
+    if uid.len() != 7 {
+        return false
+    }
+
     uid.replace_range(0..4, "");
+    println!("{}", uid);
     return contains_by_unique_identifier(&uid); 
 }
 
