@@ -1,23 +1,18 @@
-
-use diesel::RunQueryDsl;
-
 use crate::console::LogLevel;
-use crate::files::StructureFile;
-use crate::models::Employee;
-use crate::{establish_connection, log};
+use crate::database::get_employees;
+use crate::state::ProgramState;
+use crate::log;
 
-pub fn list_command(_: &mut StructureFile) {
-    use crate::schema::employees::dsl::*; 
-    let mut connection = establish_connection();
-    let employee_list = employees
-        .load::<Employee>(&mut connection)
-        .expect("couldn't find employee list");
+pub fn list_command(_: &mut ProgramState) {
+    let employee_list = get_employees();
 
     let mut index = 1;
-    for employee in employee_list.iter() {
+    for employee in employee_list {
         log!(
             LogLevel::INFO,
-            "{}. {} {}, ID: {}", index, employee.first_name, employee.last_name, employee.identifier
+            "{}. {} {}, ID: {}{}{}", 
+            index, employee.first_name, employee.last_name, 
+            employee.department, employee.role, employee.identifier
         );
 
         index += 1;

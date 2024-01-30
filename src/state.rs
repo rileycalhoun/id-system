@@ -5,6 +5,8 @@ use serde_json::Deserializer;
 use std::fs;
 use std::rc::Rc;
 
+use crate::models::Employee;
+
 #[derive(Deserialize,Serialize,Clone)]
 pub struct StructuredData {
     pub id: i32,
@@ -29,4 +31,10 @@ impl StructureFile {
             .expect(format!("Could not parse data from {}", path).as_str())
     }
 
+}
+
+pub struct ProgramState {
+    pub structure_file: StructureFile,
+    pub new_employees: Vec<Employee>,
+    pub deleted_employees: Vec<String>
 }

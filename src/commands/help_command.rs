@@ -1,9 +1,9 @@
 
 use crate::console::LogLevel;
-use crate::files::StructureFile;
+use crate::state::ProgramState;
 use crate::log;
 
-pub fn help_command(_: &mut StructureFile) {
+pub fn help_command(_: &mut ProgramState) {
     let mut index: usize = 0;
     let commands = super::COMMANDS.clone();
 

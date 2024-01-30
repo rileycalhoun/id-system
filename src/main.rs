@@ -2,7 +2,7 @@ use std::path::Path;
 use id_system::log;
 use id_system::commands::{cook_raw_command,CommandHandler};
 use id_system::console::{read_input,LogLevel};
-use id_system::files::StructureFile;
+use id_system::state::StructureFile;
 
 
 fn main() {
@@ -16,6 +16,7 @@ fn main() {
     }
 
     let structure_file = StructureFile::parse("structure.json");
+
     log!(LogLevel::INFO, "Welcome to the Employee ID System!");
 
     let mut handler = CommandHandler::new(structure_file);

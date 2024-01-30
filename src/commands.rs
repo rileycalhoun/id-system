@@ -3,7 +3,7 @@ pub mod exit_command;
 pub mod generate_command;
 pub mod help_command;
 pub mod list_command;
-pub mod reload_command;
+pub mod save_command;
 pub mod verify_command;
 
 use self::delete_command::delete_command;
@@ -11,20 +11,20 @@ use self::exit_command::exit_command;
 use self::generate_command::generate_command;
 use self::help_command::help_command;
 use self::list_command::list_command;
-use self::reload_command::reload_command;
+use self::save_command::save_command;
 use self::verify_command::verify_command;
 
 use std::sync::Arc;
 use lazy_static::lazy_static;
 
 use crate::console::LogLevel;
-use crate::files::StructureFile;
+use crate::state::{ProgramState,StructureFile};
 use crate::log;
 
 pub struct Command {
     name: Arc<str>,
     aliases: Arc<[Arc<str>]>,
-    exec: fn(data: &mut StructureFile)
+    exec: fn(data: &mut ProgramState)
 }
 
 impl Command {
@@ -32,7 +32,7 @@ impl Command {
     fn new(
         name: &str,
         aliases: &[&str],
-        exec: fn(data: &mut StructureFile)
+        exec: fn(data: &mut ProgramState)
     ) -> Self {
         let aliases = aliases.iter()
             .map(|s| Arc::from(s.to_owned()))
@@ -56,13 +56,13 @@ lazy_static! {
             Command::new("help", CommandHandler::NO_ALIASES, help_command),
             Command::new("exit", &["close", "stop"], exit_command),
             Command::new("list", CommandHandler::NO_ALIASES, list_command),
-            Command::new("reload", CommandHandler::NO_ALIASES, reload_command)
+            Command::new("save", CommandHandler::NO_ALIASES, save_command)
         ])
     };
 }
 
 pub struct CommandHandler {
-    structure_file: StructureFile
+    state: ProgramState
 }
 
 impl CommandHandler {
@@ -71,7 +71,11 @@ impl CommandHandler {
 
     pub fn new(structure_file: StructureFile) -> Self {
         return Self {
-            structure_file
+            state: ProgramState {
+                structure_file,
+                new_employees: Vec::new(),
+                deleted_employees: Vec::new()
+            }
         }
     }
 
@@ -96,7 +100,7 @@ impl CommandHandler {
         let optional = self.get_command(command.to_ascii_lowercase());
         match optional {
             Some(command) => {
-                (command.exec)(&mut self.structure_file);
+                (command.exec)(&mut self.state);
             }
     
             None => {
