@@ -1,5 +1,5 @@
 use std::path::Path;
-use id_system::database::establish_connection;
+use id_system::establish_connection;
 use id_system::log;
 use id_system::commands::{cook_raw_command,CommandHandler};
 use id_system::console::{read_input,LogLevel};

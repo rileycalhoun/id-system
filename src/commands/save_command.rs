@@ -1,11 +1,15 @@
-use crate::{database::{delete_employee, insert_employee}, log, models::Employee, state::ProgramState};
+use crate::{
+    log, 
+    models::Employee, 
+    state::ProgramState
+};
 
 fn save_insertions(new_employees: &mut Vec<Employee>) -> (i16, i16) {
     let mut indexes_inserted: Vec<usize> = Vec::new();
     let mut errors: i16 = 0;
 
     for (index, employee) in new_employees.iter().enumerate() {
-        let inserted = insert_employee(employee);
+        let inserted = Employee::insert(employee);
         if !inserted {
             log!(
                 crate::console::LogLevel::ERR,
@@ -39,7 +43,7 @@ fn save_deletions(deleted_employees: &mut Vec<String>) -> (i16, i16) {
     let mut indexes_deleted: Vec<usize> = Vec::new();
     let mut errors: i16 = 0;
     for (index, full_identifier) in deleted_employees.iter().enumerate() {
-        let deleted = delete_employee(full_identifier);
+        let deleted = Employee::remove(full_identifier);
         if !deleted {
             log!(
                 crate::console::LogLevel::ERR, 
