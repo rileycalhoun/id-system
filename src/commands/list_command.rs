@@ -1,5 +1,3 @@
-use std::iter::Filter;
-
 use crate::models::Employee;
 use crate::console::LogLevel;
 use crate::state::ProgramState;
