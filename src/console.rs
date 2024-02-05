@@ -7,7 +7,7 @@ pub enum LogLevel {
 #[macro_export]
 macro_rules! log {
     (
-        // name of enum
+        // name of the value from the LogLevel enum
         $name:path,
         $($arg:tt)*
 

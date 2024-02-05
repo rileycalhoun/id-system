@@ -3,10 +3,9 @@ use rand::Rng;
 
 use crate::commands::pad_left;
 use crate::console::{LogLevel,read_input};
-use crate::database::{contains_by_full_name, contains_by_unique_identifier};
+use crate::models::Employee;
 use crate::state::{ProgramState, StructuredData};
 use crate::log;
-use crate::models::Employee;
 
 fn get_id_from_title(title: String, data: Rc<[StructuredData]>) -> Option<i32> {
     for entry in data.iter() {
@@ -49,7 +48,7 @@ fn gen_id() -> String {
     loop {
         id = rng.gen_range(1..1000);
         let padded_id = pad_left(id.clone().to_string(), 3);
-        let contains = contains_by_unique_identifier(&padded_id); 
+        let contains = Employee::has_by_full_id(&padded_id); 
         if !contains  {
             break;
         }
@@ -67,7 +66,7 @@ pub fn generate_command(state: &mut ProgramState) {
     log!(LogLevel::INPUT, "What is the employee's last name?");
     let last_name = read_input();
 
-    let has_employee = contains_by_full_name(&first_name, &last_name);
+    let has_employee = Employee::has_by_full_name(&first_name, &last_name);
     if has_employee == true {
         log!(
             LogLevel::INPUT,
@@ -104,6 +103,7 @@ pub fn generate_command(state: &mut ProgramState) {
         first_name,
         last_name
     };
+    
     state.new_employees.push(employee.clone());
 
     log!(LogLevel::INFO, "Generated new ID for {} {}: {}{}{}", 
